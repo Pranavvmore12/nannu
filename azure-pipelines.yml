@@ -1,0 +1,34 @@
+trigger:
+- main   # pipeline runs when you push to main
+
+pool:
+  vmImage: 'ubuntu-latest'   # use Ubuntu agent
+
+steps:
+- script: echo "Starting pipeline on Ubuntu agent..."
+  displayName: 'Greeting'
+
+- script: ./hello.sh
+  displayName: 'Run Hello World script'
+
+- script: |
+    echo "Simulating build..."
+    mkdir build
+    echo "Build complete!" > build/output.txt
+  displayName: 'Build simulation'
+
+- script: |
+    echo "Running tests..."
+    if grep -q "Build complete!" build/output.txt; then
+      echo "Tests passed!"
+    else
+      echo "Tests failed!"
+      exit 1
+    fi
+  displayName: 'Test simulation'
+
+- script: |
+    echo "Deploying artifact..."
+    cp build/output.txt deploy.txt
+    echo "Deployment successful!"
+  displayName: 'Deploy simulation'
